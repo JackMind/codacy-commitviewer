@@ -1,6 +1,6 @@
-package com.codacy.commitviewer.domain.command;
+package com.codacy.commitviewer.domain.commitviewer.service.command;
 
-import com.codacy.commitviewer.domain.git.GitLogCommand;
+import com.codacy.commitviewer.domain.git.services.GitCommands;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,15 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @SpringBootTest
-class GitLogCommandTest {
+class GitCommandsTest {
 
     @Autowired
-    private GitLogCommand gitLogCommand;
+    private GitCommands gitCommands;
 
     @Test
     void test(){
         Path dir = Paths.get("/Users/rubensantos/Projects/commitviewer");
 
-        gitLogCommand.execute(dir);
+        gitCommands.getCommits(dir, 10, 0);
     }
 }
