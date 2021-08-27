@@ -25,7 +25,7 @@ public class CommitController {
     List<CommitDto> getCommitsLocal(@RequestParam("url") final String url,
                                     @RequestParam("limit") final Integer limit,
                                     @RequestParam("offset") final Integer offset){
-        log.debug("url: {} limit:{} offset:{}", url, limit, offset);
+        log.trace("url: {} limit:{} offset:{}", url, limit, offset);
         return  commitViewerAggregator.getCommits(url, limit, offset);
     }
 }

@@ -23,7 +23,7 @@ public class GitHubApiImpl implements GitHubApiClient {
         log.info("Execute remote get commit http request owner: {} repo:{} limit:{} offset:{}", owner, repo, perPage, page);
 
         List<GitHubCommitDto> gitHubCommitDtos = gitHubApi.getCommits(owner, repo, perPage, page);
-        log.debug("gitHubCommitDtos: {}", gitHubCommitDtos);
+        log.trace("gitHubCommitDtos: {}", gitHubCommitDtos);
 
         return gitHubApiMapper.to( gitHubCommitDtos );
     }

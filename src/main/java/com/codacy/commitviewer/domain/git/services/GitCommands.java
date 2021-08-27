@@ -40,7 +40,7 @@ public class GitCommands {
     }
 
     public List<Commit> gitLogFormatted(Path gitRepo, int limit, int offset) {
-        log.debug("Executing get commits with limit={} offset={} on gitRepo={}", limit, offset, gitRepo);
+        log.info("Executing get commits with limit={} offset={} on gitRepo={}", limit, offset, gitRepo);
         return command.execute(gitRepo, "git", "log",
                 "--pretty=" + format, "--date=iso-strict", "-"+limit, "--skip="+offset)
                 .stream()

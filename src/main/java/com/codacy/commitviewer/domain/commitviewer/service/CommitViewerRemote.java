@@ -19,7 +19,7 @@ public class CommitViewerRemote {
         log.info("Execute remote get commits to owner: {} repo:{} limit:{} offset:{}", gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), limit, offset);
 
         List<Commit> commits = gitHubApiClient.getCommits(gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), limit, offset);
-        log.debug("commits: {}", commits);
+        log.trace("commits: {}", commits);
 
         return commits;
     }

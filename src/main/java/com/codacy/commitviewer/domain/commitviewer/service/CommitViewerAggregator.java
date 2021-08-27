@@ -23,7 +23,7 @@ public class CommitViewerAggregator {
 
     public List<CommitDto> getCommits(String url, int limit, int offset){
         log.info("Executing get commits");
-        log.debug("url={} limit={} offset={}", url, limit, offset);
+        log.trace("url={} limit={} offset={}", url, limit, offset);
 
         GitParsedUrl gitParsedUrl = GitParsedUrl.parse(url);
 
@@ -32,11 +32,11 @@ public class CommitViewerAggregator {
             commits = commitViewerRemote.getCommits(gitParsedUrl, limit, offset);
         } catch (ExternalException externalException){
             log.warn("An error occurred while invoking external git hub api, trying local execution...");
-            log.debug("externalException", externalException);
+            log.trace("externalException", externalException);
             commits = commitViewerLocal.getCommits(gitParsedUrl, limit, offset);
         }
         log.info("Retrieving {} commits", commits.size());
-        log.debug("commits: {}", commits);
+        log.trace("commits: {}", commits);
         log.debug(commits.stream().map(commit -> commit.getSha() + " " + commit.getDate().toString()).collect(Collectors.joining("\n")));
 
         return commitMapper.from(commits);

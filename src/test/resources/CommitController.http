@@ -3,4 +3,4 @@ Accept: application/json
 
 ###
 
-GET http://localhost:8080/commits?url=https://github.com/facebook/react-native.git&limit=10&offset=5
+GET http://localhost:8080/commits?url=https://github.com/facebook/react-native.git&limit=10&offset=1

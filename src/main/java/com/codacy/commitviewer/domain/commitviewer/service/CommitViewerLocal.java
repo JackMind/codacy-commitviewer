@@ -29,7 +29,7 @@ public class CommitViewerLocal {
         }
 
         List<Commit> commits = gitCommands.gitLogFormatted(Paths.get(repoDirectory), limit, offset);
-        log.debug("Retrieving {} commits.", commits);
+        log.trace("Retrieving {} commits.", commits);
 
         return commits;
     }

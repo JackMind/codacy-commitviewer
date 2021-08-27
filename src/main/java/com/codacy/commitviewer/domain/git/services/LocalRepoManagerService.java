@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -44,13 +45,13 @@ public class LocalRepoManagerService {
         try{
             String tempRepoPrefix = "com.codacy.commitviewer.localRepos."
                     +gitParsedUrl.getOwner()+"_"+gitParsedUrl.getRepo();
-            log.debug("temp repo dir prefix: {}", tempRepoPrefix);
+            log.trace("temp repo dir prefix: {}", tempRepoPrefix);
 
             Path tempRepo = Files.createTempDirectory(tempRepoPrefix);
-            log.debug("tempRepo {}", tempRepo);
+            log.trace("tempRepo {}", tempRepo);
 
             String tempRepoPath = tempRepo.toFile().getAbsolutePath();
-            log.debug("local repo directory created at {}", tempRepoPath);
+            log.info("local repo directory created at {}", tempRepoPath);
 
             gitCommands.cloneRemoteToDirWithDepth(gitHubUrl, tempRepoPath, limit);
 
@@ -97,11 +98,14 @@ public class LocalRepoManagerService {
 
         @Bean
         @Named("localRepoCacheManager")
-        public CacheManager localRepoCacheManager(){
+        public CacheManager localRepoCacheManager(
+                @Value("${app.cache.localRepos.initialCapacity:10}") Integer intialCapacity,
+                @Value("${app.cache.localRepos.expireAfterAccessMinutes:10}") Integer expireAfterAccessMinutes,
+                @Value("${app.cache.localRepos.expireAfterWriteMinutes:10}") Integer expireAfterWriteMinutes){
             CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
             caffeineCacheManager.setCaffeine(
                     Caffeine.newBuilder()
-                    .initialCapacity(10)
+                    .initialCapacity(intialCapacity)
                     .evictionListener(
                             (key, value, removalCause) -> {
                                 LocalRepoManagerService.log.info("Executing Eviction Listener key: {} value: {}", key, value);
@@ -109,8 +113,8 @@ public class LocalRepoManagerService {
                                 LocalRepoManagerService.log.info("Local repo {} deleted ", key);
                             }
                     )
-                    .expireAfterWrite(Duration.ofSeconds(5))
-                    .expireAfterAccess(Duration.ofSeconds(10))
+                    .expireAfterWrite(Duration.ofSeconds(expireAfterWriteMinutes))
+                    .expireAfterAccess(Duration.ofSeconds(expireAfterAccessMinutes))
                     .recordStats()
 
             );
