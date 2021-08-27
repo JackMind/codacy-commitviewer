@@ -18,6 +18,10 @@ The main workflow of this app is to execute a request to the GitHub API via
 HTTP Rest to a specified remote git hub url. In case of this request fails, 
 a "local" execution is tried in order to obtain the list of commits.
 
+## Application architecture
+For the application architecture it was a used a 3 layer architecture with a DDD paradigm.
+Where the main focus was to isolate the domain logic from the external interfaces, API's, and infrastructures.
+
 ## Remote execution
 The remote execution, is a simple HTTP Rest request to the GitHub API
 (https://docs.github.com/en/rest/reference/repos#commits)
@@ -44,7 +48,5 @@ callbacks on those expire occur, that way we can easily delete the local directo
 hard disk space.
 
 ## Future work
-* The git clone approach, might not be the optimal solution. I tried to only clone the .git folder but then
-i could no pull 
 
 * Add functionality to select which branch to request the commits from.
