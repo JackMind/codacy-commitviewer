@@ -7,5 +7,5 @@ public interface Command {
 
     List<String> execute(Path directory, String... commands);
 
-    public List<String> execute(String... commands);
+    List<String> execute(String... commands);
 }

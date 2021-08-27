@@ -4,13 +4,13 @@ import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commons.services.Command;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringTokenizer;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,13 +22,13 @@ public class GitCommands {
 
     static String FIELD = "==FIELD==";
 
-    public static String format = "format:\"%H" +
+    public static String format = "format:%H" +
             FIELD +
             "%s" +
             FIELD +
             "%ad" +
             FIELD +
-            "%an\"";
+            "%an";
 
     public static Commit parse(String output) {
         StringTokenizer stringTokenizer = new StringTokenizer(output, FIELD);
@@ -39,24 +39,24 @@ public class GitCommands {
         return new Commit(sha, message, OffsetDateTime.parse(date), author);
     }
 
-    public List<Commit> getCommits(Path gitRepo, int limit, int offset) {
+    public List<Commit> gitLogFormatted(Path gitRepo, int limit, int offset) {
         log.debug("Executing get commits with limit={} offset={} on gitRepo={}", limit, offset, gitRepo);
         return command.execute(gitRepo, "git", "log",
-                "--pretty=" + format, "--date=iso-strict", "-"+limit, "--skip="+offset, "--reverse")
+                "--pretty=" + format, "--date=iso-strict", "-"+limit, "--skip="+offset)
                 .stream()
                 .map(GitCommands::parse)
                 .collect(Collectors.toList());
     }
 
-    public void cloneRepo(final String url, final String repoDirectory){
-        log.info("Executing git clone repo {} to dir {}", url, repoDirectory);
-        command.execute("git", "clone", url, repoDirectory);
+    public void cloneRemoteToDirWithDepth(final String url, final String repoDirectory, final int depth){
+        log.info("Executing git clone repo {} to dir {} with depth {}", url, repoDirectory, depth);
+        command.execute("git", "clone", "--depth" ,String.valueOf(depth), url, repoDirectory);
         log.info("Git clone completed.");
     }
 
-    public void pull(final String repoDirectory){
-        log.info("Executing git pull repo {}...", repoDirectory);
-        command.execute(Paths.get(repoDirectory), "git", "pull");
+    public void pullWithDepth(final String repoDirectory, final int depth){
+        log.info("Executing git pull repo {} with depth {} ...", repoDirectory, depth);
+        command.execute(Paths.get(repoDirectory), "git", "pull", "--depth" , String.valueOf(depth));
         log.info("Git pull completed.");
     }
 }

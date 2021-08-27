@@ -2,7 +2,6 @@ package com.codacy.commitviewer.domain.commitviewer.mapper;
 
 import com.codacy.commitviewer.api.dtos.CommitDto;
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
-import com.codacy.commitviewer.infra.github.dtos.GitHubCommitDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

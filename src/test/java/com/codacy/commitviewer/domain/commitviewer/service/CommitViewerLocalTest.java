@@ -2,7 +2,6 @@ package com.codacy.commitviewer.domain.commitviewer.service;
 
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
-import com.codacy.commitviewer.domain.commitviewer.mapper.CommitMapper;
 import com.codacy.commitviewer.domain.git.services.GitCommands;
 import com.codacy.commitviewer.domain.git.services.LocalRepoManagerService;
 import org.junit.jupiter.api.Assertions;
@@ -44,9 +43,9 @@ class CommitViewerLocalTest {
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
                 .url(url).owner(owner).repo(repo).build();
 
-        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl))
+        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, limit))
                 .thenReturn(expectedRepoDir);
-        Mockito.when(gitCommands.getCommits(Paths.get(expectedRepoDir), limit, offset))
+        Mockito.when(gitCommands.gitLogFormatted(Paths.get(expectedRepoDir), limit, offset))
                 .thenReturn(List.of(expectedCommit));
 
         List<Commit> commits = Assertions.assertDoesNotThrow(
@@ -55,14 +54,14 @@ class CommitViewerLocalTest {
         Assertions.assertEquals(expectedCommit, commits.get(0));
 
         Mockito.verify(localRepoManagerService, Mockito.times(1))
-                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture());
+                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture(), limit);
         GitParsedUrl actualGitUrl = gitUrlArgumentCaptor.getValue();
         Assertions.assertEquals(gitParsedUrl, actualGitUrl);
 
         Mockito.verify(gitCommands, Mockito.times(1))
-                .pull(expectedRepoDir);
+                .pullWithDepth(expectedRepoDir, limit);
         Mockito.verify(gitCommands, Mockito.times(1))
-                .getCommits(Paths.get(expectedRepoDir), limit, offset);
+                .gitLogFormatted(Paths.get(expectedRepoDir), limit, offset);
 
     }
 }

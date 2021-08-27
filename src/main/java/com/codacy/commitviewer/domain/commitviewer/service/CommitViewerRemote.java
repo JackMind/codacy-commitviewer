@@ -1,11 +1,7 @@
 package com.codacy.commitviewer.domain.commitviewer.service;
 
-import com.codacy.commitviewer.api.dtos.CommitDto;
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
-import com.codacy.commitviewer.domain.commitviewer.mapper.CommitMapper;
-import com.codacy.commitviewer.infra.github.dtos.GitHubCommitDto;
-import com.codacy.commitviewer.infra.github.services.GitHubApi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

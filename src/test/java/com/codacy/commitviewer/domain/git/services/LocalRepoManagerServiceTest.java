@@ -1,6 +1,5 @@
 package com.codacy.commitviewer.domain.git.services;
 
-import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.OffsetDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class LocalRepoManagerServiceTest {
 
@@ -36,8 +32,9 @@ class LocalRepoManagerServiceTest {
     void Assert_TempFolderIsCreated() throws IOException {
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
                 .url("url").owner("owner").repo("repo").build();
+        int limit = 1;
 
-        String tempPath = victim.createLocalRepoDirectory(gitParsedUrl);
+        String tempPath = victim.createLocalRepoDirectory(gitParsedUrl, limit);
 
         File tempRepo = new File(tempPath);
         Assertions.assertTrue( tempRepo.exists() );
@@ -45,7 +42,7 @@ class LocalRepoManagerServiceTest {
         Assertions.assertTrue( tempRepo.getName().contains(gitParsedUrl.getOwner()) );
 
         Mockito.verify(gitCommands, Mockito.times(1))
-                .cloneRepo(gitParsedUrl.getUrl(), tempPath);
+                .cloneRemoteToDirWithDepth(gitParsedUrl.getUrl(), tempPath, limit);
 
         Files.delete(Paths.get(tempPath));
 

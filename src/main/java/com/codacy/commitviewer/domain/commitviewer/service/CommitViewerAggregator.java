@@ -4,16 +4,13 @@ import com.codacy.commitviewer.api.dtos.CommitDto;
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
 import com.codacy.commitviewer.domain.commitviewer.mapper.CommitMapper;
-import com.codacy.commitviewer.domain.git.exceptions.MalformatedUrlException;
 import com.codacy.commitviewer.infra.commons.exception.ExternalException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,9 +31,13 @@ public class CommitViewerAggregator {
         try{
             commits = commitViewerRemote.getCommits(gitParsedUrl, limit, offset);
         } catch (ExternalException externalException){
-            log.warn("An error occurred while invoking external git hub api ", externalException);
+            log.warn("An error occurred while invoking external git hub api, trying local execution...");
+            log.debug("externalException", externalException);
             commits = commitViewerLocal.getCommits(gitParsedUrl, limit, offset);
         }
+        log.info("Retrieving {} commits", commits.size());
+        log.debug("commits: {}", commits);
+        log.debug(commits.stream().map(commit -> commit.getSha() + " " + commit.getDate().toString()).collect(Collectors.joining("\n")));
 
         return commitMapper.from(commits);
     }

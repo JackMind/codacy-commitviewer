@@ -1,10 +1,7 @@
 package com.codacy.commitviewer.domain.commitviewer.service;
 
-import com.codacy.commitviewer.api.dtos.CommitDto;
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
-import com.codacy.commitviewer.domain.commitviewer.mapper.CommitMapper;
-import com.codacy.commitviewer.domain.commons.exception.CommitViewerException;
 import com.codacy.commitviewer.domain.git.services.GitCommands;
 import com.codacy.commitviewer.domain.git.services.LocalRepoManagerService;
 import lombok.AllArgsConstructor;
@@ -24,13 +21,15 @@ public class CommitViewerLocal {
 
     public List<Commit> getCommits(final GitParsedUrl gitParsedUrl, int limit, int offset) {
         log.info("Execute Local get commits");
-        String repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl);
+        String repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, limit);
         log.debug("Repository directory: {}", repoDirectory);
 
-        gitCommands.pull(repoDirectory);
+        if(offset != 0){
+            gitCommands.pullWithDepth(repoDirectory, limit + offset);
+        }
 
-        List<Commit> commits = gitCommands.getCommits(Paths.get(repoDirectory), limit, offset);
-        log.info("Retrieving {} commits.", commits);
+        List<Commit> commits = gitCommands.gitLogFormatted(Paths.get(repoDirectory), limit, offset);
+        log.debug("Retrieving {} commits.", commits);
 
         return commits;
     }

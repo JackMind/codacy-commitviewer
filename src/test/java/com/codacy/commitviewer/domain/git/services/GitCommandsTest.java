@@ -5,16 +5,16 @@ import com.codacy.commitviewer.domain.commons.services.Command;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 
 class GitCommandsTest {
@@ -48,7 +48,7 @@ class GitCommandsTest {
                 "--pretty=" + GitCommands.format, "--date=iso-strict", "-"+limit, "--skip="+offset, "--reverse"))
                 .thenReturn(List.of(unparsedCommit));
 
-        List<Commit> commits = Assertions.assertDoesNotThrow( () -> victim.getCommits(path, limit, offset) );
+        List<Commit> commits = Assertions.assertDoesNotThrow( () -> victim.gitLogFormatted(path, limit, offset) );
 
         Assertions.assertEquals(1, commits.size());
         Assertions.assertEquals(sha, commits.get(0).getSha());
@@ -62,8 +62,9 @@ class GitCommandsTest {
     void Assert_GitCloneExecution(){
         String repo = "repo";
         String url = "url";
+        int limit = 1;
 
-        Assertions.assertDoesNotThrow( () -> victim.cloneRepo(url, repo) );
+        Assertions.assertDoesNotThrow( () -> victim.cloneRemoteToDirWithDepth(url, repo, limit) );
 
         Mockito.verify(command, times(1))
                 .execute("git", "clone", "url", "repo");
@@ -72,8 +73,9 @@ class GitCommandsTest {
     @Test
     void Assert_GitPullExecution(){
         String repo = "repo";
+        int limit = 1;
 
-        Assertions.assertDoesNotThrow( () -> victim.pull(repo) );
+        Assertions.assertDoesNotThrow( () -> victim.pullWithDepth(repo, limit) );
 
         Mockito.verify(command, times(1))
                 .execute(Paths.get(repo), "git", "pull");

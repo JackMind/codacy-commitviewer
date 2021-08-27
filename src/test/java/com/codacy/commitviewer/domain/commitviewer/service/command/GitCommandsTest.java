@@ -18,6 +18,6 @@ class GitCommandsTest {
     void test(){
         Path dir = Paths.get("/Users/rubensantos/Projects/commitviewer");
 
-        gitCommands.getCommits(dir, 10, 0);
+        gitCommands.gitLogFormatted(dir, 10, 0);
     }
 }
