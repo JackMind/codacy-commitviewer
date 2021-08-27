@@ -19,6 +19,6 @@ public interface CommitMapper {
 
     @Named("fromOffsetDateTime")
     default String fromOffsetDateTime(OffsetDateTime offsetDateTime){
-        return offsetDateTime.format(DateTimeFormatter.BASIC_ISO_DATE);
+        return offsetDateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 }

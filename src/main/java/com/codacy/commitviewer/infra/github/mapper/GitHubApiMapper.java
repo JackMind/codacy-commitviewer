@@ -7,6 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public interface GitHubApiMapper {
 
     @Named("toOffsetDateTime")
     default OffsetDateTime toOffsetDateTime(String date){
-        return OffsetDateTime.parse(date);
+        return OffsetDateTime.parse(date, DateTimeFormatter.ISO_DATE_TIME);
     }
 
 }

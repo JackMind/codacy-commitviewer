@@ -2,11 +2,13 @@ package com.codacy.commitviewer.domain.commitviewer.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.OffsetDateTime;
 
 @AllArgsConstructor
 @Getter
+@ToString
 public class Commit {
 
     private final String sha;
