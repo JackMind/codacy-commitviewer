@@ -3,8 +3,6 @@ package com.codacy.commitviewer.domain.git.services;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
 import com.codacy.commitviewer.domain.git.entity.LocalRepo;
 import com.codacy.commitviewer.domain.git.exceptions.UnableToCreateLocalRepoException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -26,7 +24,6 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoField;
 import java.util.concurrent.ConcurrentMap;
@@ -124,10 +121,10 @@ public class LocalRepoManagerService {
         cache.forEach((key, value) -> {
             LocalRepo repo = (LocalRepo) value;
             //TODO rasantos do more TimeUnits
-            long time = OffsetDateTime.now().getLong(ChronoField.INSTANT_SECONDS) - repo.getCreated().getLong(ChronoField.INSTANT_SECONDS);
-            long minutes = TimeUnit.SECONDS.toMinutes(time);
-            log.trace("time: {}, minutes: {}", time, minutes);
-            if(minutes >= deleteAfterMinutes){
+            long diffSeconds = OffsetDateTime.now().getLong(ChronoField.INSTANT_SECONDS) - repo.getCreated().getLong(ChronoField.INSTANT_SECONDS);
+            long diffMinutes = TimeUnit.SECONDS.toMinutes(diffSeconds);
+            log.trace("time: {}, minutes: {}", diffSeconds, diffMinutes);
+            if(diffMinutes >= deleteAfterMinutes){
                 cacheManager.getCache(CACHE_NAME).evict(key);
                 forceDeleteDir(repo.getPath());
                 log.info("Deleted local repo: {}", repo.getPathAsString());

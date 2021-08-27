@@ -1,6 +1,8 @@
 package com.codacy.commitviewer.infra.github.dtos;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
 
 /**
  * The object that matches the GitHub API commit provided object.
