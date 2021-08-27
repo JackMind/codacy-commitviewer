@@ -2,31 +2,20 @@ package com.codacy.commitviewer.domain.commitviewer.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.OffsetDateTime;
 
-@Data
 @AllArgsConstructor
+@Getter
 public class Commit {
 
-    private String sha;
-    private String message;
-    private OffsetDateTime date;
-    private String author;
+    private final String sha;
+    private final String message;
+    private final OffsetDateTime date;
+    private final String author;
 
-    public String getSha() {
-        return sha;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public OffsetDateTime getDate() {
-        return date;
-    }
-
-    public String getAuthor() {
-        return author;
+    public String abreviatedToString(){
+        return sha.substring(0, 5) + " " + message.substring(0, 10) + " "+ date;
     }
 }

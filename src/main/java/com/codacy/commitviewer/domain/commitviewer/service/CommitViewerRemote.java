@@ -15,10 +15,10 @@ public class CommitViewerRemote {
 
     private final GitHubApiClient gitHubApiClient;
 
-    public List<Commit> getCommits(final GitParsedUrl gitParsedUrl, int limit, int offset) {
-        log.info("Execute remote get commits to owner: {} repo:{} limit:{} offset:{}", gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), limit, offset);
+    public List<Commit> getCommits(final GitParsedUrl gitParsedUrl, int perPage, int page) {
+        log.info("Execute remote get commits to owner: {} repo:{} perPage:{} page:{}", gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), perPage, page);
 
-        List<Commit> commits = gitHubApiClient.getCommits(gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), limit, offset);
+        List<Commit> commits = gitHubApiClient.getCommits(gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), perPage, page);
         log.trace("commits: {}", commits);
 
         return commits;

@@ -19,12 +19,15 @@ public class CommitViewerLocal {
     private final LocalRepoManagerService localRepoManagerService;
     private final GitCommands gitCommands;
 
-    public List<Commit> getCommits(final GitParsedUrl gitParsedUrl, int limit, int offset) {
-        log.info("Execute Local get commits");
+    public List<Commit> getCommits(final GitParsedUrl gitParsedUrl, int perPage, int page) {
+        int limit = perPage;
+        int offset = page <= 1 ? 0 : perPage * (page-1);
+        log.info("Execute Local get commits limit: {} offset:{}", limit, offset);
+
         String repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, limit);
         log.debug("Repository directory: {}", repoDirectory);
 
-        if(offset != 0){
+        if(offset > 0){
             gitCommands.pullWithDepth(repoDirectory, limit + offset);
         }
 

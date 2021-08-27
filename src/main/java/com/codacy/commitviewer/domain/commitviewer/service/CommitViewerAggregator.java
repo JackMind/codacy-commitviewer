@@ -21,23 +21,30 @@ public class CommitViewerAggregator {
     private final CommitViewerRemote commitViewerRemote;
     private final CommitMapper commitMapper;
 
-    public List<CommitDto> getCommits(String url, int limit, int offset){
+    public List<CommitDto> getCommits(String url, int perPage, int page, boolean forceLocal){
         log.info("Executing get commits");
-        log.trace("url={} limit={} offset={}", url, limit, offset);
+        log.trace("url={} perPage={} page={} forceLocal={}", url, perPage, page, forceLocal);
 
         GitParsedUrl gitParsedUrl = GitParsedUrl.parse(url);
 
         List<Commit> commits;
-        try{
-            commits = commitViewerRemote.getCommits(gitParsedUrl, limit, offset);
-        } catch (ExternalException externalException){
-            log.warn("An error occurred while invoking external git hub api, trying local execution...");
-            log.trace("externalException", externalException);
-            commits = commitViewerLocal.getCommits(gitParsedUrl, limit, offset);
+        if(forceLocal){
+            log.info("Force local execution requested");
+            commits = commitViewerLocal.getCommits(gitParsedUrl, perPage, page);
+        } else {
+
+            try{
+                commits = commitViewerRemote.getCommits(gitParsedUrl, perPage, page);
+            } catch (ExternalException externalException){
+                log.warn("An error occurred while invoking external git hub api, trying local execution...");
+                log.trace("externalException", externalException);
+                commits = commitViewerLocal.getCommits(gitParsedUrl, perPage, page);
+            }
+
         }
         log.info("Retrieving {} commits", commits.size());
+        log.debug(commits.stream().map(Commit::abreviatedToString).collect(Collectors.joining("\n")));
         log.trace("commits: {}", commits);
-        log.debug(commits.stream().map(commit -> commit.getSha() + " " + commit.getDate().toString()).collect(Collectors.joining("\n")));
 
         return commitMapper.from(commits);
     }

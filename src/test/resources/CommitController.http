@@ -4,3 +4,17 @@ Accept: application/json
 ###
 
 GET http://localhost:8080/commits?url=https://github.com/facebook/react-native.git&limit=10&offset=1
+
+###
+
+GET http://localhost:8080/commits?url=https://github.com/JackMind/codacy-commitviewer.git&per_page=3
+
+###
+GET http://localhost:8080/commits?url=https://github.com/JackMind/codacy-commitviewer.git&per_page=3&page=2
+
+###
+
+GET http://localhost:8080/commits?url=https://github.com/JackMind/codacy-commitviewer.git&per_page=3&force_local=true
+
+###
+GET http://localhost:8080/commits?url=https://github.com/JackMind/codacy-commitviewer.git&per_page=3&page=2&force_local=true
