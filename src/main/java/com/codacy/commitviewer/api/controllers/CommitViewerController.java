@@ -32,7 +32,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 @Validated
-public class CommitController {
+public class CommitViewerController {
 
     private final CommitViewerAggregator commitViewerAggregator;
     private final CommitMapper commitMapper;

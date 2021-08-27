@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
@@ -45,17 +44,16 @@ public class CommitViewerLocal {
 
         //Creates a local repo by cloning it to a local directory with a depth flag wich value is
         //specified by the limit variable
-        String repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, limit);
+        LocalRepoManagerService.LocalRepo repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl);
         log.debug("Repository directory: {}", repoDirectory);
 
         //In case of more commit history is needed a git pull is executed with a depth flag being
         //the sum of the number of commits requested and the offset (commits to skip)
-        if(offset > 0){
-            gitCommands.pullWithDepth(repoDirectory, limit + offset);
-        }
+        gitCommands.fetchWithDepth(repoDirectory.getPathAsString(), limit + offset);
+
 
         //Executes the git log command on local repo
-        List<Commit> commits = gitCommands.logFormatted(Paths.get(repoDirectory), limit, offset);
+        List<Commit> commits = gitCommands.logFormatted(repoDirectory.getPath(), limit, offset);
         log.trace("Retrieving {} commits.", commits);
 
         return commits;

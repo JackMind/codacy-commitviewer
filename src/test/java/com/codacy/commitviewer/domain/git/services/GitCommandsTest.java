@@ -75,9 +75,9 @@ class GitCommandsTest {
         String repo = "repo";
         int limit = 1;
 
-        Assertions.assertDoesNotThrow( () -> victim.pullWithDepth(repo, limit) );
+        Assertions.assertDoesNotThrow( () -> victim.fetchWithDepth(repo, limit) );
 
         Mockito.verify(command, times(1))
-                .execute(Paths.get(repo), "git", "pull", "--depth", String.valueOf(limit) );
+                .execute(Paths.get(repo), "git", "fetch", "--depth", String.valueOf(limit) );
     }
 }

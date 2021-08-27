@@ -12,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 class LocalRepoManagerServiceTest {
 
@@ -32,19 +31,18 @@ class LocalRepoManagerServiceTest {
     void Assert_TempFolderIsCreated() throws IOException {
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
                 .url("url").owner("owner").repo("repo").build();
-        int limit = 1;
 
-        String tempPath = victim.createLocalRepoDirectory(gitParsedUrl, limit);
+        LocalRepoManagerService.LocalRepo tempPath = victim.createLocalRepoDirectory(gitParsedUrl);
 
-        File tempRepo = new File(tempPath);
+        File tempRepo = new File(tempPath.getPathAsString());
         Assertions.assertTrue( tempRepo.exists() );
         Assertions.assertTrue( tempRepo.getName().contains(gitParsedUrl.getRepo()) );
         Assertions.assertTrue( tempRepo.getName().contains(gitParsedUrl.getOwner()) );
 
         Mockito.verify(gitCommands, Mockito.times(1))
-                .cloneRemoteToDirWithDepth(gitParsedUrl.getUrl(), tempPath, limit);
+                .cloneRemoteToDirWithDepth(gitParsedUrl.getUrl(), tempPath.getPathAsString(), 1);
 
-        Files.delete(Paths.get(tempPath));
+        Files.delete(tempPath.getPath());
 
     }
 

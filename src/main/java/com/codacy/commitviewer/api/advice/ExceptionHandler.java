@@ -15,13 +15,13 @@ public class ExceptionHandler implements ProblemHandling {
 
     @org.springframework.web.bind.annotation.ExceptionHandler(CommitViewerException.class)
     ResponseEntity<Problem> handleCommitException(final CommitViewerException commitViewerException, final NativeWebRequest nativeWebRequest){
-        return create(commitViewerException, new CommitProblem(commitViewerException), nativeWebRequest);
+        return create(commitViewerException, new CommitViwerProblem(commitViewerException), nativeWebRequest);
     }
 
 
     @Data
-    public static class CommitProblem extends AbstractThrowableProblem {
-        public CommitProblem(final CommitViewerException commitViewerException){
+    public static class CommitViwerProblem extends AbstractThrowableProblem {
+        public CommitViwerProblem(final CommitViewerException commitViewerException){
             super(null, commitViewerException.getTitle(), commitViewerException.getStatus(), commitViewerException.getMessage());
         }
     }

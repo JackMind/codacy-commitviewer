@@ -88,15 +88,15 @@ public class GitCommands {
     }
 
     /**
-     * Executes a the git pull command with the depth flag.
+     * Executes a the git fetch command with the depth flag.
      * The depth flag is used to replicate the pagination functionality like on a DB.
      *
      * @param repoDirectory the repo directory
      * @param depth         the depth
      */
-    public void pullWithDepth(final String repoDirectory, final int depth){
+    public void fetchWithDepth(final String repoDirectory, final int depth){
         log.info("Executing git pull repo {} with depth {} ...", repoDirectory, depth);
-        command.execute(Paths.get(repoDirectory), "git", "pull", "--depth" , String.valueOf(depth));
+        command.execute(Paths.get(repoDirectory), "git", "fetch", "--depth" , String.valueOf(depth));
         log.info("Git pull completed.");
     }
 }

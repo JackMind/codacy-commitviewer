@@ -42,11 +42,12 @@ class CommitViewerLocalTest {
         int expectedLimit = 1;
 
         String expectedRepoDir = "expectedRepoDir";
+        LocalRepoManagerService.LocalRepo localRepo = new LocalRepoManagerService.LocalRepo(expectedRepoDir, OffsetDateTime.now());
         Commit expectedCommit = new Commit("sha", "message", OffsetDateTime.MIN, "author");
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder().url("url").owner("owner").repo("repo").build();
 
-        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, perPage))
-                .thenReturn(expectedRepoDir);
+        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl))
+                .thenReturn(localRepo);
         Mockito.when(gitCommands.logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset))
                 .thenReturn(List.of(expectedCommit));
 
@@ -56,7 +57,7 @@ class CommitViewerLocalTest {
         Assertions.assertEquals(expectedCommit, commits.get(0));
 
         Mockito.verify(localRepoManagerService, Mockito.times(1))
-                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture(), eq(expectedLimit));
+                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture());
         GitParsedUrl actualGitUrl = gitUrlArgumentCaptor.getValue();
         Assertions.assertEquals(gitParsedUrl, actualGitUrl);
 
@@ -77,9 +78,10 @@ class CommitViewerLocalTest {
         Commit expectedCommit = new Commit("sha", "message", OffsetDateTime.MIN, "author");
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
                 .url("url").owner("owner").repo("repo").build();
+        LocalRepoManagerService.LocalRepo localRepo = new LocalRepoManagerService.LocalRepo(expectedRepoDir, OffsetDateTime.now());
 
-        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, perPage))
-                .thenReturn(expectedRepoDir);
+        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl))
+                .thenReturn(localRepo);
         Mockito.when(gitCommands.logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset))
                 .thenReturn(List.of(expectedCommit));
 
@@ -89,13 +91,13 @@ class CommitViewerLocalTest {
         Assertions.assertEquals(expectedCommit, commits.get(0));
 
         Mockito.verify(localRepoManagerService, Mockito.times(1))
-                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture(), eq(perPage));
+                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture());
         GitParsedUrl actualGitUrl = gitUrlArgumentCaptor.getValue();
         Assertions.assertEquals(gitParsedUrl, actualGitUrl);
 
 
         Mockito.verify(gitCommands, Mockito.times(1))
-                .pullWithDepth(eq(expectedRepoDir), eq(expectedOffset + expectedLimit) );
+                .fetchWithDepth(eq(expectedRepoDir), eq(expectedOffset + expectedLimit) );
         Mockito.verify(gitCommands, Mockito.times(1))
                 .logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset);
 
