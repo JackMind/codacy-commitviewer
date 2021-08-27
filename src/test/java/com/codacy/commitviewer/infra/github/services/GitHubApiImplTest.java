@@ -33,7 +33,7 @@ class GitHubApiImplTest {
         int perPage = 1;
         int page = 0;
 
-        List<GitHubCommitDto> gitHubCommitDtos= List.of(new GitHubCommitDto());
+        List<GitHubCommitDto> gitHubCommitDtos= List.of(GitHubCommitDto.builder().build());
 
         Mockito.when(gitHubApi.getCommits(owner, repo, perPage, page))
                 .thenReturn(gitHubCommitDtos);

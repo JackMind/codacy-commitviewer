@@ -1,15 +1,14 @@
 package com.codacy.commitviewer.api.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
 
-@Data
+@Value
 @AllArgsConstructor
 public class CommitDto {
-    private String sha;
-    private String message;
-    private String date;
-    private String author;
-
+    String sha;
+    String message;
+    String date;
+    String author;
 }

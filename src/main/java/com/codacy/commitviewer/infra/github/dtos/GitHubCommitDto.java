@@ -1,25 +1,27 @@
 package com.codacy.commitviewer.infra.github.dtos;
 
-import lombok.Data;
+import lombok.*;
 
 /**
  * The object that matches the GitHub API commit provided object.
  * Only the required values are mapped.
  */
-@Data
+@Value
+@AllArgsConstructor
+@Builder
 public class GitHubCommitDto {
-    private String sha;
-    private GitHubCommitContentDto commit;
+    String sha;
+    GitHubCommitContentDto commit;
 
-    @Data
+    @Value
     public static class GitHubCommitContentDto {
-        private GitHubAuthorDto author;
-        private String message;
+        GitHubAuthorDto author;
+        String message;
 
-        @Data
+        @Value
         public static class GitHubAuthorDto {
-            private String name;
-            private String date;
+            String name;
+            String date;
 
         }
     }

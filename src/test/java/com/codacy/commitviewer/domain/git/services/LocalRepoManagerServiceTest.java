@@ -1,6 +1,7 @@
 package com.codacy.commitviewer.domain.git.services;
 
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
+import com.codacy.commitviewer.domain.git.entity.LocalRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class LocalRepoManagerServiceTest {
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
                 .url("url").owner("owner").repo("repo").build();
 
-        LocalRepoManagerService.LocalRepo tempPath = victim.createLocalRepoDirectory(gitParsedUrl);
+        LocalRepo tempPath = victim.createLocalRepoDirectory(gitParsedUrl);
 
         File tempRepo = new File(tempPath.getPathAsString());
         Assertions.assertTrue( tempRepo.exists() );

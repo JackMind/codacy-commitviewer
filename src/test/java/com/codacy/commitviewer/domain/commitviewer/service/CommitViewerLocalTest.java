@@ -2,6 +2,7 @@ package com.codacy.commitviewer.domain.commitviewer.service;
 
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
+import com.codacy.commitviewer.domain.git.entity.LocalRepo;
 import com.codacy.commitviewer.domain.git.services.GitCommands;
 import com.codacy.commitviewer.domain.git.services.LocalRepoManagerService;
 import org.junit.jupiter.api.Assertions;
@@ -42,7 +43,7 @@ class CommitViewerLocalTest {
         int expectedLimit = 1;
 
         String expectedRepoDir = "expectedRepoDir";
-        LocalRepoManagerService.LocalRepo localRepo = new LocalRepoManagerService.LocalRepo(expectedRepoDir, OffsetDateTime.now());
+        LocalRepo localRepo = new LocalRepo(expectedRepoDir, OffsetDateTime.now());
         Commit expectedCommit = new Commit("sha", "message", OffsetDateTime.MIN, "author");
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder().url("url").owner("owner").repo("repo").build();
 
@@ -78,7 +79,7 @@ class CommitViewerLocalTest {
         Commit expectedCommit = new Commit("sha", "message", OffsetDateTime.MIN, "author");
         GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
                 .url("url").owner("owner").repo("repo").build();
-        LocalRepoManagerService.LocalRepo localRepo = new LocalRepoManagerService.LocalRepo(expectedRepoDir, OffsetDateTime.now());
+        LocalRepo localRepo = new LocalRepo(expectedRepoDir, OffsetDateTime.now());
 
         Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl))
                 .thenReturn(localRepo);

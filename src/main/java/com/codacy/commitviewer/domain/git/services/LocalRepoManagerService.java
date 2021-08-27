@@ -1,6 +1,7 @@
 package com.codacy.commitviewer.domain.git.services;
 
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
+import com.codacy.commitviewer.domain.git.entity.LocalRepo;
 import com.codacy.commitviewer.domain.git.exceptions.UnableToCreateLocalRepoException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -133,18 +134,6 @@ public class LocalRepoManagerService {
                 log.debug("createdAt: {}", repo.getCreated());
             }
         });
-
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class LocalRepo{
-        private final String pathAsString;
-        private final OffsetDateTime created;
-
-        public Path getPath(){
-            return Paths.get(pathAsString);
-        }
 
     }
 

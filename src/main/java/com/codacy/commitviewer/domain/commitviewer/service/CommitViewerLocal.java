@@ -2,6 +2,7 @@ package com.codacy.commitviewer.domain.commitviewer.service;
 
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;
 import com.codacy.commitviewer.domain.commitviewer.entity.GitParsedUrl;
+import com.codacy.commitviewer.domain.git.entity.LocalRepo;
 import com.codacy.commitviewer.domain.git.services.GitCommands;
 import com.codacy.commitviewer.domain.git.services.LocalRepoManagerService;
 import lombok.AllArgsConstructor;
@@ -44,13 +45,12 @@ public class CommitViewerLocal {
 
         //Creates a local repo by cloning it to a local directory with a depth flag wich value is
         //specified by the limit variable
-        LocalRepoManagerService.LocalRepo repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl);
+        LocalRepo repoDirectory = localRepoManagerService.createLocalRepoDirectory(gitParsedUrl);
         log.debug("Repository directory: {}", repoDirectory);
 
-        //In case of more commit history is needed a git pull is executed with a depth flag being
+        //To retrieve the necessary commit history is needed a git fetch with a depth flag, being
         //the sum of the number of commits requested and the offset (commits to skip)
         gitCommands.fetchWithDepth(repoDirectory.getPathAsString(), limit + offset);
-
 
         //Executes the git log command on local repo
         List<Commit> commits = gitCommands.logFormatted(repoDirectory.getPath(), limit, offset);
