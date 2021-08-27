@@ -1,4 +1,4 @@
-package com.codacy.commitviewer.domain.commitviewer.mapper;
+package com.codacy.commitviewer.api.mapper;
 
 import com.codacy.commitviewer.api.dtos.CommitDto;
 import com.codacy.commitviewer.domain.commitviewer.entity.Commit;

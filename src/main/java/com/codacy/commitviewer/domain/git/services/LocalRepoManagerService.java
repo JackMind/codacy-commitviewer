@@ -5,14 +5,12 @@ import com.codacy.commitviewer.domain.git.exceptions.UnableToCreateLocalRepoExce
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -23,7 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +34,16 @@ public class LocalRepoManagerService {
 
     private final GitCommands gitCommands;
 
+    /**
+     * Create local repo directory and saves the created directory path into a cache.
+     * The cache is based on the url of the requested github url repo.
+     * After the directory is created the clone of the remote repo to the local directory
+     * is executed with the depth flag.
+     *
+     * @param gitParsedUrl the git parsed url
+     * @param limit        the limit
+     * @return the string
+     */
     @Cacheable(value = LocalRepoCacheConfig.CACHE_NAME, cacheManager = "localRepoCacheManager",
             keyGenerator = "localRepoKeyGenerator")
     public String createLocalRepoDirectory(final GitParsedUrl gitParsedUrl, final int limit){
@@ -61,6 +68,11 @@ public class LocalRepoManagerService {
         }
     }
 
+    /**
+     * Force delete directory.
+     *
+     * @param path the path
+     */
     public static void forceDeleteDir(Path path){
         try {
             FileUtils.forceDelete(path.toFile());
@@ -79,6 +91,10 @@ public class LocalRepoManagerService {
         @Autowired
         private CacheManager cacheManager;
 
+        /**
+         * Sets up a callback that will be executed by the JVM on shutdown that
+         * deletes all created directories on cache.
+         */
         @PostConstruct
         void cleanUp(){
             LocalRepoManagerService.log.info("Setting up clean up shutdown hook for cache {}", CACHE_NAME);
@@ -96,6 +112,14 @@ public class LocalRepoManagerService {
 
         }
 
+        /**
+         * Local repo cache manager cache manager.
+         *
+         * @param intialCapacity           the intial capacity
+         * @param expireAfterAccessMinutes the expire after access minutes
+         * @param expireAfterWriteMinutes  the expire after write minutes
+         * @return the cache manager
+         */
         @Bean
         @Named("localRepoCacheManager")
         public CacheManager localRepoCacheManager(
@@ -113,14 +137,19 @@ public class LocalRepoManagerService {
                                 LocalRepoManagerService.log.info("Local repo {} deleted ", key);
                             }
                     )
-                    .expireAfterWrite(Duration.ofSeconds(expireAfterWriteMinutes))
-                    .expireAfterAccess(Duration.ofSeconds(expireAfterAccessMinutes))
+                    .expireAfterWrite(Duration.ofMinutes(expireAfterWriteMinutes))
+                    .expireAfterAccess(Duration.ofMinutes(expireAfterAccessMinutes))
                     .recordStats()
 
             );
             return caffeineCacheManager;
         }
 
+        /**
+         * Local repo key generator key generator.
+         *
+         * @return the key generator
+         */
         @Bean
         @Named("localRepoKeyGenerator")
         public KeyGenerator localRepoKeyGenerator(){

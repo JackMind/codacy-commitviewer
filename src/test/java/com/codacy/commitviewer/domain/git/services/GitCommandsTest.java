@@ -45,10 +45,10 @@ class GitCommandsTest {
         String unparsedCommit = sha+"==FIELD=="+message+"==FIELD=="+date+"==FIELD=="+author;
 
         Mockito.when(command.execute(path, "git", "log",
-                "--pretty=" + GitCommands.format, "--date=iso-strict", "-"+limit, "--skip="+offset, "--reverse"))
+                "--pretty="+GitCommands.GIT_LOG_FORMAT, "--date=iso-strict", "-"+limit, "--skip="+offset) )
                 .thenReturn(List.of(unparsedCommit));
 
-        List<Commit> commits = Assertions.assertDoesNotThrow( () -> victim.gitLogFormatted(path, limit, offset) );
+        List<Commit> commits = Assertions.assertDoesNotThrow( () -> victim.logFormatted(path, limit, offset) );
 
         Assertions.assertEquals(1, commits.size());
         Assertions.assertEquals(sha, commits.get(0).getSha());
@@ -67,7 +67,7 @@ class GitCommandsTest {
         Assertions.assertDoesNotThrow( () -> victim.cloneRemoteToDirWithDepth(url, repo, limit) );
 
         Mockito.verify(command, times(1))
-                .execute("git", "clone", "url", "repo");
+                .execute("git", "clone", "--depth", String.valueOf(limit), "url", "repo");
     }
 
     @Test
@@ -78,6 +78,6 @@ class GitCommandsTest {
         Assertions.assertDoesNotThrow( () -> victim.pullWithDepth(repo, limit) );
 
         Mockito.verify(command, times(1))
-                .execute(Paths.get(repo), "git", "pull");
+                .execute(Paths.get(repo), "git", "pull", "--depth", String.valueOf(limit) );
     }
 }

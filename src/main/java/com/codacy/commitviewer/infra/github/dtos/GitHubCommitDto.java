@@ -2,6 +2,10 @@ package com.codacy.commitviewer.infra.github.dtos;
 
 import lombok.Data;
 
+/**
+ * The object that matches the GitHub API commit provided object.
+ * Only the required values are mapped.
+ */
 @Data
 public class GitHubCommitDto {
     private String sha;

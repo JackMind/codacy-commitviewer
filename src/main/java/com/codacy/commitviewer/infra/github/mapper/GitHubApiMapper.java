@@ -9,6 +9,11 @@ import org.mapstruct.Named;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * This mapper is responsible to map the GitHub commit object to
+ * the domain model. Also is converts the string date to an offsetDateTime object
+ * for easier future manipulation.
+ */
 @Mapper(componentModel = "spring")
 public interface GitHubApiMapper {
 

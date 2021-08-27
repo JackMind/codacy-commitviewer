@@ -1,7 +1,6 @@
 package com.codacy.commitviewer.domain.commitviewer.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 import java.time.OffsetDateTime;

@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
+
 class CommitViewerLocalTest {
 
     @Mock
@@ -32,36 +34,70 @@ class CommitViewerLocalTest {
     }
 
     @Test
-    void AssertThatReturnCommitsDto_CreateLocalRepoDir_ThenGitClone_ThenGitPull_ThenGetCommits(){
-        int limit = 1;
-        int offset = 0;
-        String url = "url";
-        String owner = "owner";
-        String repo = "repo";
+    void AssertThatReturnCommitsDto_CreateLocalRepoDir_ThenGetCommits(){
+        int perPage = 1;
+        int page = 1;
+
+        int expectedOffset = 0;
+        int expectedLimit = 1;
+
         String expectedRepoDir = "expectedRepoDir";
         Commit expectedCommit = new Commit("sha", "message", OffsetDateTime.MIN, "author");
-        GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
-                .url(url).owner(owner).repo(repo).build();
+        GitParsedUrl gitParsedUrl = GitParsedUrl.builder().url("url").owner("owner").repo("repo").build();
 
-        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, limit))
+        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, perPage))
                 .thenReturn(expectedRepoDir);
-        Mockito.when(gitCommands.gitLogFormatted(Paths.get(expectedRepoDir), limit, offset))
+        Mockito.when(gitCommands.logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset))
                 .thenReturn(List.of(expectedCommit));
 
         List<Commit> commits = Assertions.assertDoesNotThrow(
-                () -> victim.getCommits(gitParsedUrl, limit, offset) );
+                () -> victim.getCommits(gitParsedUrl, perPage, page) );
 
         Assertions.assertEquals(expectedCommit, commits.get(0));
 
         Mockito.verify(localRepoManagerService, Mockito.times(1))
-                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture(), limit);
+                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture(), eq(expectedLimit));
         GitParsedUrl actualGitUrl = gitUrlArgumentCaptor.getValue();
         Assertions.assertEquals(gitParsedUrl, actualGitUrl);
 
         Mockito.verify(gitCommands, Mockito.times(1))
-                .pullWithDepth(expectedRepoDir, limit);
+                .logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset);
+
+    }
+
+    @Test
+    void AssertThatReturnCommitsDto_CreateLocalRepoDir_ThenGitPull_ThenGetCommits(){
+        int perPage = 1;
+        int page = 2;
+
+        int expectedOffset = 1;
+        int expectedLimit = 1;
+
+        String expectedRepoDir = "expectedRepoDir";
+        Commit expectedCommit = new Commit("sha", "message", OffsetDateTime.MIN, "author");
+        GitParsedUrl gitParsedUrl = GitParsedUrl.builder()
+                .url("url").owner("owner").repo("repo").build();
+
+        Mockito.when(localRepoManagerService.createLocalRepoDirectory(gitParsedUrl, perPage))
+                .thenReturn(expectedRepoDir);
+        Mockito.when(gitCommands.logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset))
+                .thenReturn(List.of(expectedCommit));
+
+        List<Commit> commits = Assertions.assertDoesNotThrow(
+                () -> victim.getCommits(gitParsedUrl, perPage, page) );
+
+        Assertions.assertEquals(expectedCommit, commits.get(0));
+
+        Mockito.verify(localRepoManagerService, Mockito.times(1))
+                .createLocalRepoDirectory(gitUrlArgumentCaptor.capture(), eq(perPage));
+        GitParsedUrl actualGitUrl = gitUrlArgumentCaptor.getValue();
+        Assertions.assertEquals(gitParsedUrl, actualGitUrl);
+
+
         Mockito.verify(gitCommands, Mockito.times(1))
-                .gitLogFormatted(Paths.get(expectedRepoDir), limit, offset);
+                .pullWithDepth(eq(expectedRepoDir), eq(expectedOffset + expectedLimit) );
+        Mockito.verify(gitCommands, Mockito.times(1))
+                .logFormatted(Paths.get(expectedRepoDir), expectedLimit, expectedOffset);
 
     }
 }

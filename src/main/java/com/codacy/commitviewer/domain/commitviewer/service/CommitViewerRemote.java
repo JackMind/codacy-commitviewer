@@ -15,6 +15,14 @@ public class CommitViewerRemote {
 
     private final GitHubApiClient gitHubApiClient;
 
+    /**
+     * Returns a list of commits from a remote repo by executing the GitHub API.
+     *
+     * @param gitParsedUrl the git parsed url
+     * @param perPage      the per page
+     * @param page         the page
+     * @return the commits
+     */
     public List<Commit> getCommits(final GitParsedUrl gitParsedUrl, int perPage, int page) {
         log.info("Execute remote get commits to owner: {} repo:{} perPage:{} page:{}", gitParsedUrl.getOwner(), gitParsedUrl.getRepo(), perPage, page);
 

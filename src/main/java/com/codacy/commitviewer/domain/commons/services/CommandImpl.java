@@ -41,17 +41,22 @@ public class CommandImpl implements Command {
             Process process = pb.start();
 
             BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
             List<String> output = in.lines().collect(Collectors.toList());
+            List<String> errors = error.lines().collect(Collectors.toList());
+
             int exit = process.waitFor();
 
             in.close();
-
-            if (exit != 0) {
-                throw new UnableToExecuteCommand(String.format("runCommand returned %d", exit));
-            }
+            error.close();
 
             log.debug("output: {}", String.join("\n", output));
+
+            if (exit != 0) {
+                log.error("error: {}", String.join("\n", errors));
+                throw new UnableToExecuteCommand(String.format("runCommand returned %d", exit));
+            }
             return output;
         } catch (IOException | InterruptedException ex) {
             throw new UnableToExecuteCommand("Unable to execute specified commands " + String.join(" ", commands) +

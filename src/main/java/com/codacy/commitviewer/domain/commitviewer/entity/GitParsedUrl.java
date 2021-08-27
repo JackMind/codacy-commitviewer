@@ -22,6 +22,13 @@ public class GitParsedUrl {
     private final String owner;
     private final String repo;
 
+    /**
+     * Parses a git parsed url into a structured model.
+     * This method also checks if the github url is well formatted.
+     *
+     * @param url the url
+     * @return the git parsed url
+     */
     public static GitParsedUrl parse(final String url){
         log.info("Parsing url: {}", url);
         //Checks if the url is well formated
@@ -42,6 +49,7 @@ public class GitParsedUrl {
 
             return new GitParsedUrl(url, owner, repo);
         }catch (NoSuchElementException e){
+            //In case of a required token is missing, it means that the url is not a github url.
             throw new BadGitHubUrlException(url);
         }
     }

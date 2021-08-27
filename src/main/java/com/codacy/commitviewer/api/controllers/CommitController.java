@@ -1,6 +1,7 @@
 package com.codacy.commitviewer.api.controllers;
 
 import com.codacy.commitviewer.api.dtos.CommitDto;
+import com.codacy.commitviewer.api.mapper.CommitMapper;
 import com.codacy.commitviewer.domain.commitviewer.service.CommitViewerAggregator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import java.util.Optional;
 public class CommitController {
 
     private final CommitViewerAggregator commitViewerAggregator;
+    private final CommitMapper commitMapper;
 
     @GetMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     List<CommitDto> getCommitsLocal(@RequestParam("url") @NotNull final String url,
@@ -34,6 +36,6 @@ public class CommitController {
         log.trace("url: {} per_page:{} page:{} forceLocal:{}", url, per_page, page, forceLocal);
         boolean local = !Objects.isNull(forceLocal) && forceLocal;
         int pageInt = Optional.ofNullable(page).orElse(1);
-        return  commitViewerAggregator.getCommits(url, per_page, pageInt, local);
+        return commitMapper.from( commitViewerAggregator.getCommits(url, per_page, pageInt, local) );
     }
 }

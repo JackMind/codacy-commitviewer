@@ -17,6 +17,7 @@ import java.util.List;
         configuration = GitHubApi.GitHuhApiConfig.class)
 public interface GitHubApi {
 
+    //Reference: https://docs.github.com/en/rest/reference/repos#commits
     @GetMapping(path = "/repos/{owner}/{repo}/commits",
             produces = MediaType.APPLICATION_JSON_VALUE)
     List<GitHubCommitDto> getCommits(@PathVariable("owner") final String owner,
